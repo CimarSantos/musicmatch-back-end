@@ -1,0 +1,98 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model class_adress {
+  id           Int     @id(map: "class_adress_pk") @default(autoincrement())
+  teacher_id   Int
+  street       String  @db.VarChar
+  number       Int
+  neighborhood String  @db.VarChar
+  city         String  @db.VarChar
+  complement   String? @db.VarChar
+  teacher      teacher @relation(fields: [teacher_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "class_adress_fk0")
+}
+
+model classes {
+  id             Int      @id(map: "classes_pk") @default(autoincrement())
+  user_id        Int
+  teacher_id     Int
+  date_class     DateTime @db.Timestamp(6)
+  online_class   Boolean  @default(true)
+  inperson_class Boolean? @default(false)
+  teacher        teacher  @relation(fields: [teacher_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "classes_fk1")
+  user           user     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "classes_fk0")
+}
+
+model payment_data {
+  id         Int     @id(map: "payment_data_pk") @default(autoincrement())
+  teacher_id Int
+  pix_key    String
+  teacher    teacher @relation(fields: [teacher_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "payment_data_fk0")
+}
+
+model presentation_videos {
+  id            Int     @id(map: "presentation_videos_pk") @default(autoincrement())
+  teacher_id    Int
+  presentation1 String
+  presentation2 String?
+  presentation3 String?
+  teacher       teacher @relation(fields: [teacher_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "presentation_videos_fk0")
+}
+
+model teacher {
+  id                  Int                   @id(map: "teacher_pk") @default(autoincrement())
+  user_id             Int
+  school_name         String?               @db.VarChar
+  main_instrument     String                @db.VarChar
+  music_experience    String?
+  teach_teory         Boolean
+  in_person           Boolean?
+  inperson_class_cost Float?                @db.Real
+  online_class        Boolean               @default(true)
+  platforms_for_class String?
+  online_class_cost   Float                 @db.Real
+  teacher_experience  String?
+  user                user                  @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "teacher_fk0")
+  class_adress        class_adress[]
+  classes             classes[]
+  payment_data        payment_data[]
+  presentation_videos presentation_videos[]
+}
+
+model user {
+  id          Int           @id(map: "user_pk") @default(autoincrement())
+  name        String        @db.VarChar
+  email       String        @unique @db.VarChar
+  tel         Decimal       @unique @db.Decimal
+  password    String
+  classes     classes[]
+  session     session[]
+  teacher     teacher[]
+  user_adress user_adress[]
+}
+
+model user_adress {
+  id           Int     @id(map: "user_adress_pk") @default(autoincrement())
+  user_id      Int
+  street       String  @db.VarChar
+  number       Int
+  neighborhood String  @db.VarChar
+  city         String  @db.VarChar
+  complement   String? @db.VarChar
+  user         user    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_adress_fk0")
+}
+
+model session {
+  id        Int      @id(map: "session_pk") @default(autoincrement())
+  user_id   Int
+  token     String
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @default(now()) @db.Timestamp(6)
+  user      user     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "session_fk0")
+}
