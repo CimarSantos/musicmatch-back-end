@@ -45,6 +45,15 @@ model presentation_videos {
   teacher       teacher @relation(fields: [teacher_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "presentation_videos_fk0")
 }
 
+model session {
+  id        Int      @id(map: "session_pk") @default(autoincrement())
+  user_id   Int
+  token     String
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @default(now()) @db.Timestamp(6)
+  user      user     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "session_fk0")
+}
+
 model teacher {
   id                  Int                   @id(map: "teacher_pk") @default(autoincrement())
   user_id             Int
@@ -67,9 +76,7 @@ model teacher {
 
 model user {
   id          Int           @id(map: "user_pk") @default(autoincrement())
-  name        String        @db.VarChar
   email       String        @unique @db.VarChar
-  tel         Decimal       @unique @db.Decimal
   password    String
   classes     classes[]
   session     session[]
@@ -86,13 +93,4 @@ model user_adress {
   city         String  @db.VarChar
   complement   String? @db.VarChar
   user         user    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_adress_fk0")
-}
-
-model session {
-  id        Int      @id(map: "session_pk") @default(autoincrement())
-  user_id   Int
-  token     String
-  createdAt DateTime @default(now()) @db.Timestamp(6)
-  updatedAt DateTime @default(now()) @db.Timestamp(6)
-  user      user     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "session_fk0")
 }
