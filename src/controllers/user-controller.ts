@@ -1,4 +1,3 @@
-import userRepository from "@/repositories/user-repository";
 import userService from "@/services/users-service";
 import { Request, Response } from "express";
 import httpStatus from "http-status";
